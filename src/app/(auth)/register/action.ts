@@ -11,10 +11,29 @@ interface RegisterForm {
   tingkat: string;
 }
 
-export async function registerUser(form: RegisterForm) {
+interface RegisterResult {
+  success: boolean;
+  message?: string;
+}
+
+export async function registerUser(form: RegisterForm): Promise<RegisterResult> {
   try {
+    // Cek apakah email sudah terdaftar
+    const existingUser = await prisma.user.findUnique({
+      where: { email: form.email },
+    });
+
+    if (existingUser) {
+      return {
+        success: false,
+        message: "Email sudah terdaftar. Silakan gunakan email lain.",
+      };
+    }
+
+    // Hash password
     const hashedPassword = await bcrypt.hash(form.password, 10);
 
+    // Buat user baru
     await prisma.user.create({
       data: {
         name: form.name,
@@ -25,12 +44,30 @@ export async function registerUser(form: RegisterForm) {
       },
     });
 
-    return { success: true };
-  } catch (error: unknown) {
+    return {
+      success: true,
+    };
+  } catch (error) {
+    // Handle error Prisma atau lainnya
     if (error instanceof Error) {
-      return { success: false, message: error.message };
-    } else {
-      return { success: false, message: "Terjadi kesalahan yang tidak diketahui." };
+      console.error("Error saat registrasi:", error.message);
+      return {
+        success: false,
+        message: "Terjadi kesalahan internal. Silakan coba lagi nanti.",
+      };
     }
+
+    return {
+      success: false,
+      message: "Terjadi kesalahan yang tidak diketahui.",
+    };
   }
+}
+
+export async function checkEmailExists(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  return Boolean(user);
 }
