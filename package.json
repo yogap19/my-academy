@@ -10,10 +10,12 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.8.0",
     "@prisma/client": "^6.4.1",
     "bcryptjs": "^3.0.2",
     "lucide-react": "^0.476.0",
     "next": "15.1.7",
+    "next-auth": "^4.24.11",
     "prisma": "^6.4.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
