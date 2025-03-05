@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Search, ChevronDown } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
+import { signOut } from "next-auth/react"; // Tambahkan ini
 
 export default function Topbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -54,10 +55,7 @@ export default function Topbar() {
               </Link>
               <button
                 className="w-full text-left px-4 py-2 text-sm hover:bg-gray-100 text-red-600"
-                onClick={() => {
-                  // Logout logic di sini, contoh: remove token
-                  console.log("Logout...");
-                }}
+                onClick={() => signOut()} // NextAuth logout
               >
                 Logout
               </button>
